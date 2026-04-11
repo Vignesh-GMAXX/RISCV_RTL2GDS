@@ -1,0 +1,15 @@
+[04/11 21:39:22      0s] 
+[04/11 21:39:22      0s] Cadence Innovus(TM) Implementation System.
+[04/11 21:39:22      0s] Copyright 2021 Cadence Design Systems, Inc. All rights reserved worldwide.
+[04/11 21:39:22      0s] 
+[04/11 21:39:22      0s] Version:	v21.19-s058_1, built Thu Apr 4 09:59:17 PDT 2024
+[04/11 21:39:22      0s] Options:	
+[04/11 21:39:22      0s] Date:		Sat Apr 11 21:39:22 2026
+[04/11 21:39:22      0s] Host:		vlsi.iitgn.ac.in (x86_64 w/Linux 3.10.0-693.el7.x86_64) (20cores*80cpus*Intel(R) Xeon(R) CPU E5-2698 v4 @ 2.20GHz 51200KB)
+[04/11 21:39:22      0s] OS:		CentOS Linux 7 (Core)
+[04/11 21:39:22      0s] 
+[04/11 21:39:22      0s] License:
+[04/11 21:39:22      0s] 		[21:39:22.427930] Configured Lic search path (21.01-s002): 5280@14.139.1.126:1717@14.139.1.126
+
+[04/11 21:39:23      0s] 		invs	Innovus Implementation System	21.1	checkout succeeded
+[04/11 21:39:23      0s] 		8 CPU jobs allowed with the current license(s). Use setMultiCpuUsage to set your required CPU count.
