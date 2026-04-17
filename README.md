@@ -1,373 +1,171 @@
 # RISCV_RTL2GDS
 
-Detailed repository for a RISC-V microprocessor project spanning:
+Main project repository for a complete RISC-V implementation journey across three major folders:
 
-1. RTL design and FPGA-focused verification
-2. Synthesis and physical implementation
-3. Signoff collateral and reports
-4. Gate-level simulation, power artifacts, and LVS notes
+1. Cadence_Files
+2. RTL_FPGA
+3. RTL_to_GDS
 
-This README is intentionally detailed and is designed to be a complete project guide.
+This README is the root-level project document and explains all three folders in one place.
 
-## 1. Project Scope
+## 1. Project Overview
 
-The repository captures the implementation lifecycle of a RISC-V pipeline-oriented microprocessor design. The content includes both source-level design files and downstream EDA outputs.
+This project captures the full flow of a RISC-V microprocessor design from front-end RTL and verification to backend physical implementation and signoff-style analysis.
 
-Primary goals of the project:
+The repository combines:
 
-1. Build and validate a functional RV32I-style datapath/control pipeline at RTL.
-2. Verify functionality with targeted and regression testbenches.
-3. Carry the design through synthesis, floorplanning, placement, CTS, and routing.
-4. Produce signoff-oriented timing/area/DRC/connectivity reports.
-5. Archive supporting GLS, power, and LVS artifacts.
+1. Source RTL and simulation testbenches
+2. FPGA-oriented wrapper and constraints
+3. Synthesis and implementation outputs
+4. Timing, area, QoR, DRC, and connectivity reports
+5. GLS, power, and LVS-related evidence
 
-## 2. Top-Level Repository Structure
+## 2. Root Folder Guide (The Three Main Folders)
 
-At the root, the repository contains:
-
-1. Cadence_Files/
-2. RTL_FPGA/
-3. RTL_to_GDS/
-4. README.md
-
-### 2.1 Cadence_Files/
-
-Current role:
-
-1. Container directory for Cadence-related workspace organization.
-2. Includes a placeholder README so the folder remains visible in GitHub.
-
-### 2.2 RTL_FPGA/
-
-Focus area:
-
-1. RTL source hierarchy and board/FPGA integration files.
-2. Testbench suites for instruction-level and hazard-level verification.
-3. C-to-RISC-V program preparation notes for simulation stimulus.
-
-### 2.3 RTL_to_GDS/
-
-Focus area:
-
-1. Genus synthesis reports and netlist collateral.
-2. Innovus implementation artifacts and signoff outputs.
-3. GLS simulation evidence, LVS notes, and power-related files.
-4. A persistent work directory with generated implementation state.
-
-## 3. RTL_FPGA: Detailed Breakdown
-
-The RTL_FPGA folder is the front-end and verification side of the project.
-
-### 3.1 Design Sources (RTL_FPGA/design)
-
-Design folder contains 34 files, including datapath, control, memories, and wrappers:
-
-1. adder.v
-2. alu.v
-3. Basys3_top.v
-4. basys3_top.xdc
-5. branch.v
-6. clock_divider.v
-7. control_decoder.v
-8. control_unit.v
-9. Core.v
-10. data_memory.v
-11. data_memory_top.v
-12. Decode.v
-13. decode_pipe.v
-14. Execute.v
-15. execute_forwarding.v
-16. execute_pipe.v
-17. Fetch.v
-18. fetch_pipe.v
-19. immediate_gen.v
-20. instruction_memory.v
-21. instruc_mem_top.v
-22. instr_max5.mem
-23. instr_sort5.mem
-24. memory_stage.v
-25. memstage_pipe.v
-26. Microprocessor.v
-27. mux1_2.v
-28. mux2_4.v
-29. mux3_8.v
-30. program_counter.v
-31. register_file.v
-32. type_decoder.v
-33. wrapper_memory.v
-34. Write_back.v
-
-Functional interpretation of major blocks:
-
-1. Fetch/decode/execute/memory/writeback stage partitioning is represented by Fetch.v, Decode.v, Execute.v, memory_stage.v, and Write_back.v.
-2. Inter-stage pipeline registers are represented by fetch_pipe.v, decode_pipe.v, execute_pipe.v, and memstage_pipe.v.
-3. ALU and branch decision logic are represented by alu.v and branch.v.
-4. Immediate generation and instruction type decoding are represented by immediate_gen.v and type_decoder.v.
-5. Register and memory components are represented by register_file.v, data_memory.v, instruction_memory.v, and top wrappers.
-6. Basys3_top.v and constraint file basys3_top.xdc provide board-level wrapping for FPGA deployment/testing.
-
-### 3.2 Main Testbench Suite (RTL_FPGA/tb)
-
-The tb folder contains 22 testbenches, including focused ISA and hazard checks:
-
-1. Basys3_top_tb.v
-2. FPGA_simple_tb.v
-3. FPGA_TB.v
-4. Microprocessor_4reg_tb.v
-5. Microprocessor_btype_single_inst_tb.v
-6. Microprocessor_hazards_all_tb.v
-7. Microprocessor_hazard_add_beq_tb.v
-8. Microprocessor_hazard_free_tb.v
-9. Microprocessor_hazard_lw_add_tb.v
-10. Microprocessor_hazard_raw_adj_tb.v
-11. Microprocessor_hazard_raw_gap1_tb.v
-12. Microprocessor_hazard_store_data_tb.v
-13. Microprocessor_hazard_stress_tb.v
-14. Microprocessor_hazard_war_like_tb.v
-15. Microprocessor_itype_single_inst_tb.v
-16. Microprocessor_jalr_single_inst_tb.v
-17. Microprocessor_jtype_single_inst_tb.v
-18. Microprocessor_load_single_inst_tb.v
-19. Microprocessor_rtype_single_inst_tb.v
-20. Microprocessor_rv32i_all37_tb.v
-21. Microprocessor_stype_single_inst_tb.v
-22. Microprocessor_utype_single_inst_tb.v
-
-Coverage intent of this suite:
-
-1. Single-instruction sanity for R, I, S, B, U, J, and JALR classes.
-2. Dependency/hazard-focused scenarios: RAW adjacent and gap, load-use, store data, branch/control interactions.
-3. Combined regression with Microprocessor_hazards_all_tb.v and broader instruction sweep using Microprocessor_rv32i_all37_tb.v.
-
-### 3.3 Extended Testbench Suite (RTL_FPGA/tb_new)
-
-The tb_new folder contains 17 additional tests:
-
-1. Algorithm_fibonacci_tb.v
-2. Algorithm_gcd_tb.v
-3. Algorithm_max4_tb.v
-4. Algorithm_sort4_tb.v
-5. Algorithm_sum_n_tb.v
-6. Hazard4_ctrl_bb_tb.v
-7. Hazard4_ctrl_ctrl_tb.v
-8. Hazard4_ctrl_jj_tb.v
-9. Hazard4_load_branch_tb.v
-10. Hazard4_load_use_tb.v
-11. Hazard4_partial_store_load_tb.v
-12. Hazard4_raw_adj_tb.v
-13. Hazard4_raw_gap1_tb.v
-14. Hazard4_raw_gap2_tb.v
-15. Hazard4_store_data_tb.v
-16. Hazard4_store_load_order_tb.v
-17. Microprocessor_rv32i_all37_single_run_tb.v
-
-These tests extend:
-
-1. Algorithmic workloads for functional confidence beyond synthetic one-op sequences.
-2. More granular control hazard mixes and store/load ordering checks.
-3. Single-run consolidated RV32I pattern execution.
-
-### 3.4 Suggested RTL_FPGA Simulation Setup
-
-The existing project notes indicate this standard flow:
-
-1. Add all RTL files from RTL_FPGA/design as design sources.
-2. Add selected files from RTL_FPGA/tb or RTL_FPGA/tb_new as simulation sources.
-3. Set a target testbench as simulation top.
-4. Run behavioral simulation and validate expected register/memory/control behavior.
-
-## 4. Program Generation Flow (C to RISC-V Machine Code)
-
-The RTL_FPGA documentation includes a Windows + WSL flow for generating simulation programs.
-
-Typical toolchain sequence:
-
-1. Install riscv64-unknown-elf gcc toolchain.
-2. Compile C to assembly and ELF for RV32I.
-3. Convert ELF to binary.
-4. Convert binary words to hex format for instruction loading.
-
-Representative command sequence:
-
-```bash
-sudo apt install gcc-riscv64-unknown-elf
-riscv64-unknown-elf-gcc -march=rv32i -mabi=ilp32 -O3 -nostdlib -S main.c -o program.s
-riscv64-unknown-elf-gcc -march=rv32i -mabi=ilp32 -O3 -nostdlib -Wl,-Ttext=0x00000000 main.c -o program.elf
-riscv64-unknown-elf-objcopy -O binary program.elf program.bin
-hexdump -v -e '1/4 "%08x\n"' program.bin > program.hex
-```
-
-Usage expectation:
-
-1. Use generated program.hex as instruction memory input for simulation-oriented testbenches.
-2. Update checks/assertions in the active testbench according to expected program behavior.
-
-## 5. RTL_to_GDS: Detailed Breakdown
-
-The RTL_to_GDS folder contains implementation and signoff-oriented collateral.
-
-Top-level directories and files:
-
-1. genus files/
-2. GLS_Simulation/
-3. innovus files/
-4. LVS/
-5. power/
-6. rtl design/
-7. work/
-8. contribution table.pdf
-9. README.md
-
-### 5.1 Reported Signoff Snapshot
-
-Key values documented in existing flow notes:
-
-1. Final setup slack (worst register-to-register path): +1 ps (MET)
-2. Clock period: 20,000 ps (50 MHz)
-3. Critical data path delay: 17,266 ps
-4. Final total area: 379,586.276
-5. Final cell area: 369,128.284
-6. Final net area: 10,457.992
-7. Final synthesis leaf instance count: 8,937
-8. DRC summary reported as no violations in final report set
-
-Critical path endpoints documented:
-
-1. Source: u_microprocessor_core/u_core/u_executepipeline/alu_result_reg[2]/CP
-2. Destination: u_microprocessor_core/u_core/u_fetchstage/u_pc0/address_out_reg[0]/D
-
-### 5.2 Genus Artifacts (RTL_to_GDS/genus files)
+### 2.1 Cadence_Files
 
 Purpose:
 
-1. Capture synthesis-stage reports, mapped netlist artifacts, and visual snapshots.
-2. Preserve report sets across generic/map/optimized/final contexts.
+1. Workspace container for Cadence-oriented project organization.
+2. Keeps Cadence-related path structure visible at repository root.
 
-Typical contents include:
+Current content note:
 
-1. Area, gate-count, QoR, and timing reports.
-2. Mapped and generic netlist-related files.
-3. Screenshots used to document milestones in synthesis and implementation.
+1. Contains a placeholder README to keep the folder visible on GitHub.
+2. Main implementation data lives in RTL_to_GDS, not here.
 
-### 5.3 RTL Design Inputs for Backend (RTL_to_GDS/rtl design)
-
-Purpose:
-
-1. Hold source-side files and scripts used as backend flow entry.
-2. Archive reports, outputs, and formal-equivalence mapping files generated during synthesis progression.
-
-Notable sub-areas:
-
-1. rtl design/outputs for generated netlists and SDC views.
-2. rtl design/reports for stage-wise metrics.
-3. rtl design/fv for formal mapping collateral.
-
-### 5.4 Innovus Artifacts (RTL_to_GDS/innovus files)
+### 2.2 RTL_FPGA
 
 Purpose:
 
-1. Preserve implementation databases/checkpoints and final GDS-related exports.
-2. Store netlist checks and DRC reporting outputs.
+1. Front-end design and verification directory.
+2. Holds RTL source code, board integration files, and simulation testbenches.
 
-Notable sub-areas:
+Core contents:
 
-1. innovus files/io_pins_and_top_file
-2. innovus files/netlist_to_gds
-3. innovus files/gds related
-4. innovus files/drc
+1. design: RTL modules such as pipeline stages, control, ALU, memories, muxes, and top wrappers.
+2. tb: focused and regression testbenches for instruction classes and hazards.
+3. tb_new: additional algorithmic and hazard scenario testbenches.
+4. c_src: C programs used as source inputs for instruction generation workflows.
 
-### 5.5 GLS Evidence (RTL_to_GDS/GLS_Simulation)
+### 2.3 RTL_to_GDS
 
-Documented GLS notes indicate:
+Purpose:
 
-1. Pad-level top testbench microprocessor_pad_top_tb used.
-2. VCD waveforms generated under GLS_Simulation subfolders.
-3. Instruction stream exercising arithmetic, logical, memory, branch, and jump classes.
+1. Backend implementation and signoff-collateral directory.
+2. Tracks synthesis, PnR, GLS, power, and LVS outcomes.
 
-### 5.6 Power Collateral (RTL_to_GDS/power)
+Core contents:
 
-The power folder contains simulation and report artifacts for power analysis context.
+1. rtl design: backend-facing RTL/scripts/reports/outputs.
+2. genus files: synthesis reports, netlist collateral, and flow screenshots.
+3. innovus files: implementation checkpoints, DRC/connectivity reports, GDS-related files.
+4. GLS_Simulation: gate-level simulation artifacts and waveform outputs.
+5. power: power estimation/simulation artifacts and reports.
+6. LVS: layout-vs-schematic notes and run artifacts.
+7. work: generated tool databases and intermediate implementation state.
 
-Documented summary values:
+## 3. End-to-End Flow Covered By This Repository
 
-1. Total power around 24.19 mW (as noted in existing flow documentation).
-2. Register-heavy contribution share noted in existing report summary.
+The project captures a practical RTL-to-GDS flow:
 
-### 5.7 LVS Notes (RTL_to_GDS/LVS)
+1. RTL design and module integration in RTL_FPGA/design.
+2. Behavioral and directed verification through tb and tb_new suites.
+3. Program generation flow from C to machine code for simulation stimulus.
+4. Synthesis in Genus with stage-wise report generation.
+5. Physical implementation in Innovus (floorplan, placement, CTS, routing).
+6. Signoff-style checks (timing/area/DRC/connectivity).
+7. Post-implementation analysis through GLS, power, and LVS collateral.
 
-Current LVS status in existing notes:
+## 4. RTL_FPGA Detailed Summary
 
-1. Final compare did not complete due to ground-pin naming mismatch (VSS_CORE vs VSS).
-2. Additional run-time issues such as duplicate subckt warnings were reported.
-3. Result interpretation indicates a netlist consistency and naming alignment task remains before clean closure.
+### 4.1 What the Design Folder Contains
 
-### 5.8 Work Database (RTL_to_GDS/work)
+RTL_FPGA/design contains the major microarchitecture building blocks:
 
-The work folder is a generated implementation workspace and includes tool databases/checkpoints/logs. It is useful for traceability and replay, but it is not a hand-maintained source tree.
+1. Pipeline stage modules: Fetch, Decode, Execute, memory_stage, Write_back.
+2. Pipeline registers: fetch_pipe, decode_pipe, execute_pipe, memstage_pipe.
+3. Datapath primitives: adder, alu, branch, mux blocks.
+4. Control and decode logic: control_unit, control_decoder, type_decoder, immediate_gen.
+5. Storage and program support: register_file, data_memory, instruction_memory and wrappers.
+6. Top-level integration: Microprocessor, Core, Basys3_top.
+7. FPGA constraints: basys3_top.xdc.
 
-## 6. Architecture and Debug Visibility Notes
+Instruction memory files included:
 
-Based on existing project documentation, the top-level implementation supports:
+1. instr_max5.mem
+2. instr_sort5.mem
 
-1. Instruction memory selection via 2-bit control.
-2. Output-selection multiplexing via 2-bit control.
-3. Shared 32-bit debug-style output bus carrying different internal views by mode.
+### 4.2 What the Testbenches Cover
 
-Documented output modes include:
+RTL_FPGA/tb includes:
 
-1. Packed register values
-2. Program counter/control-signal packed view
-3. Current instruction view
-4. Packed ALU inputs/output and memory output view
+1. Single-instruction class tests for R/I/S/B/U/J and JALR behavior.
+2. Hazard tests for RAW, load-use, store-data, branch interaction, and stress mixes.
+3. Broader RV32I regression-style run coverage.
 
-## 7. Verification Strategy Summary
+RTL_FPGA/tb_new extends with:
 
-The verification approach in this repository is layered:
+1. Algorithm-driven checks (fibonacci, gcd, max, sort, sum).
+2. Additional hazard/control combinations and ordering scenarios.
+3. Consolidated single-run RV32I coverage bench.
 
-1. Unit-like instruction-class tests in RTL_FPGA/tb.
-2. Hazard-focused directed tests in RTL_FPGA/tb and RTL_FPGA/tb_new.
-3. Broader regression-style runs for RV32I coverage.
-4. GLS evidence under RTL_to_GDS/GLS_Simulation.
+## 5. RTL_to_GDS Detailed Summary
 
-Hazard themes represented across benches:
+### 5.1 Synthesis and Reporting
 
-1. RAW adjacency and spaced dependencies
-2. Load-use interactions
-3. Store-data forwarding/order interactions
-4. Control/control and jump/control combinations
+Synthesis collateral is organized across:
 
-## 8. Practical Navigation Guide
+1. RTL_to_GDS/rtl design
+2. RTL_to_GDS/genus files
 
-If you are new to this repository, a good read order is:
+These areas contain:
 
-1. Start with this root README.
-2. Review RTL_FPGA/README.md for simulation and testbench intent.
-3. Inspect RTL_FPGA/design for module-level structure.
-4. Run/inspect RTL_FPGA/tb and RTL_FPGA/tb_new for behavior validation.
-5. Move to RTL_to_GDS/README.md for physical-flow and signoff context.
-6. Inspect RTL_to_GDS/rtl design/reports and RTL_to_GDS/genus files for synthesis metrics.
-7. Inspect RTL_to_GDS/innovus files for implementation outputs and checks.
-8. Use RTL_to_GDS/GLS_Simulation, RTL_to_GDS/power, and RTL_to_GDS/LVS for post-implementation evidence.
+1. Stage-wise timing/area/gate/QoR reports.
+2. Generic/mapped/incremental/final netlist outputs.
+3. Associated constraints and formal-equivalence support files.
 
-## 9. Reproducibility and Environment Notes
+### 5.2 Physical Design and Signoff Files
 
-Important practical notes:
+Physical design data is organized in RTL_to_GDS/innovus files and includes:
 
-1. This repository contains both source and generated EDA artifacts.
-2. Some files are large and may be expensive to clone repeatedly.
-3. For lightweight access, sparse checkout or selective download is recommended.
-4. Tool versions and PDK/library environments can affect exact numerical reproduction of reports.
+1. Netlist-to-GDS run artifacts.
+2. I/O and top-level integration collateral.
+3. DRC reports.
+4. Final GDS-related files.
 
-## 10. Current Known Gaps / Follow-Up Opportunities
+### 5.3 GLS, Power, and LVS
 
-Potential improvements for future updates:
+1. GLS_Simulation stores gate-level simulation outputs such as waveforms and VCD evidence.
+2. power stores power-analysis context and generated reports.
+3. LVS stores LVS run notes/artifacts, including currently documented naming/alignment issues that affected final compare closure.
 
-1. Add explicit run scripts with command-line wrappers for each EDA stage.
-2. Add a consolidated verification dashboard with pass/fail matrix by testbench.
-3. Add explicit instruction-coverage matrix mapping benches to ISA groups.
-4. Add unified naming-convention cleanup for LVS closure.
-5. Add artifact minimization policy if repository size reduction is required.
+## 6. Known Reported Project Metrics
 
-## 11. Maintainer
+From existing report snapshots documented in this repository:
+
+1. Final setup slack reported as MET with +1 ps worst-path slack.
+2. Clock period used in final timing context: 20,000 ps (50 MHz).
+3. Final area summary includes total area around 379,586.276.
+4. Final DRC status reported as no violations in final report set.
+
+These values are report-derived and should be revalidated if tool/library versions change.
+
+## 7. How To Read This Repository Efficiently
+
+Recommended order:
+
+1. Start from this root README.
+2. Go to RTL_FPGA for architecture and verification understanding.
+3. Go to RTL_to_GDS for synthesis through signoff collateral.
+4. Use subfolder READMEs for stage-specific notes.
+
+## 8. Practical Notes
+
+1. Repository includes large generated EDA outputs in addition to source files.
+2. For lightweight browsing, use selective clone/sparse checkout if needed.
+3. Reproducing exact backend numbers depends on tool, library, and run environment consistency.
+
+## 9. Maintainer
 
 Vignesh-GMAXX
